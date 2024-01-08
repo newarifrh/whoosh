@@ -7,22 +7,24 @@ import {
   removeUserById,
 } from "../services/user-service";
 import { handlerError } from "../utils/handle-error";
+import { presentUser, presentUsers } from "../presenter/user-presenter";
+import { errorResponse, successResponse } from "../utils/handle-response";
 
 const index = async (req: Request, res: Response) => {
   try {
     const users = await getUsers();
 
-    res.status(200).json({
-      data: users,
-      message: "Users retrieved successfully.",
-    });
+    const formattedUsers = presentUsers(users);
+
+    return successResponse(
+      res,
+      formattedUsers,
+      "Users retrieved successfully."
+    );
   } catch (e) {
     const error = handlerError(e);
 
-    return res.status(error.httpCode).json({
-      data: null,
-      message: error.message,
-    });
+    return errorResponse(res, error.message, error.httpCode);
   }
 };
 
@@ -31,17 +33,17 @@ const show = async (req: Request, res: Response) => {
     const id = req.params.id;
     const user = await getUserById(id);
 
-    res.status(200).json({
-      data: user,
-      message: "User detail retrieved successfully.",
-    });
+    const formattedUsers = presentUser(user);
+
+    return successResponse(
+      res,
+      formattedUsers,
+      "User detail retrieved successfully."
+    );
   } catch (e) {
     const error = handlerError(e);
 
-    return res.status(error.httpCode).json({
-      data: null,
-      message: error.message,
-    });
+    return errorResponse(res, error.message, error.httpCode);
   }
 };
 
@@ -50,17 +52,18 @@ const store = async (req: Request, res: Response) => {
     const { name, email } = req.body;
     const user = await saveUser({ name, email });
 
-    res.status(201).json({
-      data: user,
-      message: "User created successfully.",
-    });
+    const formattedUsers = presentUser(user);
+
+    return successResponse(
+      res,
+      formattedUsers,
+      "User detail retrieved successfully.",
+      201
+    );
   } catch (e) {
     const error = handlerError(e);
 
-    return res.status(error.httpCode).json({
-      data: null,
-      message: error.message,
-    });
+    return errorResponse(res, error.message, error.httpCode);
   }
 };
 
@@ -71,17 +74,17 @@ const update = async (req: Request, res: Response) => {
 
     const user = await modifyUserById(id, { name, email });
 
-    return res.status(200).json({
-      data: user,
-      message: "User updated successfully.",
-    });
+    const formattedUsers = presentUser(user);
+
+    return successResponse(
+      res,
+      formattedUsers,
+      "User detail retrieved successfully."
+    );
   } catch (e) {
     const error = handlerError(e);
 
-    return res.status(error.httpCode).json({
-      data: null,
-      message: error.message,
-    });
+    return errorResponse(res, error.message, error.httpCode);
   }
 };
 
@@ -91,14 +94,11 @@ const destroy = async (req: Request, res: Response) => {
 
     await removeUserById(id);
 
-    return res.status(204).json();
+    return successResponse(res, null, "", 204);
   } catch (e) {
     const error = handlerError(e);
 
-    return res.status(error.httpCode).json({
-      data: null,
-      message: error.message,
-    });
+    return errorResponse(res, error.message, error.httpCode);
   }
 };
 
