@@ -1,5 +1,5 @@
 ## Whoosh
-A simple application in implementing Clean Architecture in Node.js consisting of Express.js, and MongoDB Replica Set.
+A simple app in Node.js consisting of Express.js, and MongoDB Replica Set.
 
 
 ### Prerequisite
